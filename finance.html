@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Embeings AI — Financial Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05080F;
+      --surface: #0A0D18;
+      --elevated: #0F1424;
+      --card: #0D1120;
+      --border: rgba(0,200,255,0.10);
+      --border-glow: rgba(0,200,255,0.40);
+      --text: #D8E8F4;
+      --muted: #4A6080;
+      --dim: #2A3A50;
+      --blue: #00C8FF;
+      --cyan: #00FFB2;
+      --amber: #FFB800;
+      --red: #FF4560;
+      --green: #00E676;
+      --purple: #9C6AFF;
+      --glow-blue: 0 0 20px rgba(0,200,255,0.35), 0 0 60px rgba(0,200,255,0.12);
+      --glow-cyan: 0 0 20px rgba(0,255,178,0.35), 0 0 60px rgba(0,255,178,0.10);
+      --glow-sm: 0 0 8px rgba(0,200,255,0.50);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; }
+
+    /* MONO utility */
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* GRID BG */
+    .grid-bg {
+      position: relative;
+    }
+    .grid-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* FADE UP */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: none; }
+    .fade-up[data-delay="1"] { transition-delay: 0.1s; }
+    .fade-up[data-delay="2"] { transition-delay: 0.2s; }
+    .fade-up[data-delay="3"] { transition-delay: 0.3s; }
+    .fade-up[data-delay="4"] { transition-delay: 0.4s; }
+
+    /* LABEL */
+    .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+    .label::before { content: '[ '; }
+    .label::after { content: ' ]'; }
+
+    /* STATUS DOT */
+    .live-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse-dot 2s ease-in-out infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--green); }
+      50% { opacity: 0.4; box-shadow: 0 0 2px var(--green); }
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(5,8,15,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.12em;
+      color: var(--text);
+    }
+    .nav-logo-mark {
+      width: 30px; height: 30px;
+      border: 1px solid var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--blue);
+      box-shadow: var(--glow-sm);
+      position: relative;
+    }
+    .nav-logo-mark::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border: 1px solid rgba(0,200,255,0.15);
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-links a:hover { color: var(--blue); }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--green);
+      letter-spacing: 0.08em;
+    }
+    .nav-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 9px 20px;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      transition: all 0.2s;
+    }
+    .nav-cta:hover {
+      background: var(--blue);
+      color: var(--bg);
+      box-shadow: var(--glow-blue);
+    }
+
+    /* TICKER STRIP */
+    .ticker-strip {
+      height: 32px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .ticker-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--blue);
+      padding: 0 16px;
+      white-space: nowrap;
+      border-right: 1px solid var(--border);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      background: var(--elevated);
+      flex-shrink: 0;
+    }
+    .ticker-scroll-wrap {
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 0;
+      animation: ticker-move 35s linear infinite;
+      white-space: nowrap;
+    }
+    @keyframes ticker-move {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      border-right: 1px solid var(--border);
+    }
+    .ticker-sym { color: var(--text); font-weight: 600; }
+    .ticker-val { color: var(--muted); }
+    .ticker-chg.up { color: var(--green); }
+    .ticker-chg.dn { color: var(--red); }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 92px;
+      overflow: hidden;
+    }
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-radial {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(0,200,255,0.06) 0%, transparent 70%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 80px 48px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-left {}
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid rgba(0,255,178,0.25);
+      background: rgba(0,255,178,0.05);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .hero-h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(40px, 5.5vw, 76px);
+      font-weight: 700;
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+      color: #F0F6FF;
+      margin-bottom: 24px;
+    }
+    .hero-h1 em {
+      font-style: normal;
+      color: var(--blue);
+      position: relative;
+    }
+    .hero-h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: 4px; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--blue), transparent);
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 500px;
+      margin-bottom: 40px;
+    }
+    .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      background: var(--blue);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { box-shadow: var(--glow-blue); transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border: 1px solid var(--dim);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* Hero Right — Terminal Widget */
+    .hero-terminal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-terminal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+    }
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--elevated);
+    }
+    .terminal-dots { display: flex; gap: 6px; }
+    .terminal-dots span {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .terminal-dots span:nth-child(1) { background: #FF5F57; }
+    .terminal-dots span:nth-child(2) { background: #FEBC2E; }
+    .terminal-dots span:nth-child(3) { background: #28C840; }
+    .terminal-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .terminal-body { padding: 20px 16px; }
+    .terminal-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .terminal-row:last-child { border-bottom: none; }
+    .t-sym { color: var(--text); font-weight: 600; }
+    .t-price { color: var(--text); }
+    .t-chg { font-size: 11px; padding: 2px 6px; }
+    .t-chg.up { color: var(--green); background: rgba(0,230,118,0.08); }
+    .t-chg.dn { color: var(--red); background: rgba(255,69,96,0.08); }
+    .t-sparkline { width: 60px; height: 24px; }
+
+    /* Chart widget */
+    .terminal-chart-wrap {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+    .chart-title { color: var(--muted); }
+    .chart-val { color: var(--blue); font-weight: 600; }
+    #hero-chart { width: 100%; height: 80px; }
+
+    /* AI Signal widget */
+    .ai-signal-wrap {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .ai-signal-header {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: var(--purple); letter-spacing: 0.12em;
+    }
+    .ai-signal-header::before { content: '▲'; font-size: 8px; }
+    .ai-bar-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .ai-bar-row { display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+    .ai-bar-label { width: 80px; color: var(--muted); flex-shrink: 0; }
+    .ai-bar-track {
+      flex: 1; height: 4px;
+      background: rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-bar-fill {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ai-bar-fill.blue { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+    .ai-bar-fill.purple { background: linear-gradient(90deg, var(--purple), #C084FF); }
+    .ai-bar-fill.amber { background: linear-gradient(90deg, var(--amber), #FFD700); }
+    .ai-bar-val { width: 32px; text-align: right; color: var(--text); }
+
+    /* ─── STATS BAND ─── */
+    #stats {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-col {
+      padding: 40px 48px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .stat-col:last-child { border-right: none; }
+    .stat-col::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .stat-col:hover::before { opacity: 1; }
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-num span { font-size: 22px; color: var(--cyan); }
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    /* ─── PLATFORM SHOWCASE ─── */
+    #platform {
+      padding: 120px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .platform-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .platform-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 64px;
+      align-items: end;
+    }
+    .platform-h2 {
+      font-size: clamp(32px, 3.5vw, 52px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      color: #F0F6FF;
+    }
+    .platform-h2 span { color: var(--blue); }
+    .platform-desc {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    /* Dashboard mockup */
+    .dashboard-mock {
+      background: var(--card);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .dashboard-mock::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan), transparent);
+    }
+    .dash-topbar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      height: 44px;
+      border-bottom: 1px solid var(--border);
+      background: var(--elevated);
+    }
+    .dash-tab {
+      padding: 0 20px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      border-right: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dash-tab.active {
+      color: var(--blue);
+      background: rgba(0,200,255,0.05);
+      border-bottom: 1px solid var(--blue);
+    }
+    .dash-body {
+      display: grid;
+      grid-template-columns: 200px 1fr 220px;
+      min-height: 380px;
+    }
+    .dash-sidebar {
+      border-right: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    .dash-menu-item {
+      padding: 9px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dash-menu-item.active { color: var(--blue); background: rgba(0,200,255,0.05); border-left: 2px solid var(--blue); }
+    .dash-menu-item:hover { color: var(--text); }
+    .dash-icon { font-size: 12px; }
+    .dash-main { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .dash-main-header {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+    }
+    .dash-main-title { color: var(--text); font-size: 14px; font-weight: 600; font-family: 'Space Grotesk', sans-serif; }
+    .dash-chart-area { flex: 1; position: relative; min-height: 200px; }
+    #dash-main-chart { width: 100%; height: 200px; }
+    .dash-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .dash-metric {
+      padding: 12px;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+    }
+    .dash-metric-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px; font-weight: 700;
+      color: var(--text); margin-bottom: 4px;
+    }
+    .dash-metric-val.up { color: var(--green); }
+    .dash-metric-val.dn { color: var(--red); }
+    .dash-metric-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; }
+    .dash-right {
+      border-left: 1px solid var(--border);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .dash-right-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.12em; margin-bottom: 4px; }
+    .order-book { display: flex; flex-direction: column; gap: 2px; }
+    .order-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 3px 0;
+      position: relative;
+    }
+    .order-bar {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      opacity: 0.15;
+      border-radius: 1px;
+    }
+    .order-bar.bid { background: var(--green); }
+    .order-bar.ask { background: var(--red); }
+    .order-price { width: 60px; z-index: 1; }
+    .order-price.bid { color: var(--green); }
+    .order-price.ask { color: var(--red); }
+    .order-size { color: var(--muted); z-index: 1; font-size: 9px; }
+    .ai-scan-wrap { border-top: 1px solid var(--border); padding-top: 12px; }
+    .ai-scan-row {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      color: var(--muted); padding: 4px 0;
+    }
+    .ai-scan-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 3px;
+    }
+    .ai-scan-dot.ok { background: var(--green); }
+    .ai-scan-dot.warn { background: var(--amber); }
+    .ai-scan-dot.info { background: var(--blue); }
+
+    /* ─── SERVICES ─── */
+    #services {
+      padding: 120px 0;
+      background: var(--surface);
+      position: relative;
+    }
+    .services-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .section-header { margin-bottom: 56px; }
+    .section-h2 {
+      font-size: clamp(28px, 3vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: #F0F6FF;
+      line-height: 1.1;
+      margin-top: 16px;
+    }
+    .section-h2 span { color: var(--cyan); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .service-card {
+      background: var(--card);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .service-card:nth-child(1)::before { background: var(--blue); }
+    .service-card:nth-child(2)::before { background: var(--cyan); }
+    .service-card:nth-child(3)::before { background: var(--purple); }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-card:hover { background: var(--elevated); }
+    .service-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--muted);
+      letter-spacing: 0.12em; margin-bottom: 24px;
+    }
+    .service-mini-chart { margin-bottom: 20px; }
+    .service-h3 {
+      font-size: 20px; font-weight: 600;
+      color: var(--text); margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .service-p { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 24px; }
+    .service-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .service-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; padding: 4px 8px;
+      border: 1px solid var(--dim);
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── PROCESS ─── */
+    #process {
+      padding: 120px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .process-bg-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 220px;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      color: rgba(0,200,255,0.025);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+    }
+    .process-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 48px;
+      position: relative;
+      z-index: 1;
+    }
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid var(--border);
+      margin-top: 56px;
+    }
+    .process-step {
+      padding: 40px 32px;
+      border-right: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .process-step:last-child { border-right: none; }
+    .process-connector {
+      position: absolute;
+      top: 52px; right: -1px;
+      width: 2px; height: 20px;
+      background: var(--blue);
+      display: none;
+    }
+    .step-num-large {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 48px; font-weight: 700;
+      color: rgba(0,200,255,0.12);
+      line-height: 1; margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .step-h3 {
+      font-size: 17px; font-weight: 600;
+      color: var(--text); margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .step-p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .step-duration {
+      margin-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: var(--blue);
+      letter-spacing: 0.12em;
+    }
+
+    /* ─── MISSION ─── */
+    #mission {
+      padding: 120px 0;
+      background: var(--surface);
+      position: relative;
+    }
+    .mission-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 96px;
+      align-items: center;
+    }
+    .mission-h2 {
+      font-size: clamp(32px, 3.5vw, 52px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      color: #F0F6FF;
+      margin: 16px 0 24px;
+    }
+    .mission-h2 span { color: var(--blue); }
+    .mission-p { font-size: 16px; color: var(--muted); line-height: 1.75; margin-bottom: 36px; }
+    .mission-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--blue);
+      letter-spacing: 0.10em; text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid rgba(0,200,255,0.3);
+      padding-bottom: 4px;
+      transition: all 0.2s;
+    }
+    .mission-link:hover { color: var(--cyan); border-color: var(--cyan); gap: 12px; }
+    .mission-right {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .mission-stat {
+      background: var(--card);
+      padding: 32px 28px;
+      position: relative;
+    }
+    .mission-stat-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px; font-weight: 700;
+      line-height: 1; margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .mission-stat-val.blue { color: var(--blue); }
+    .mission-stat-val.cyan { color: var(--cyan); }
+    .mission-stat-val.amber { color: var(--amber); }
+    .mission-stat-val.purple { color: var(--purple); }
+    .mission-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.10em; }
+
+    /* Mission image */
+    .mission-image-strip {
+      max-width: 1320px;
+      margin: 80px auto 0;
+      padding: 0 48px;
+    }
+    .mission-image-strip img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.5) saturate(0.6) hue-rotate(180deg);
+      border: 1px solid var(--border);
+    }
+
+    /* ─── FAQ ─── */
+    #faq {
+      padding: 120px 0;
+      position: relative;
+    }
+    .faq-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .faq-list { border-top: 1px solid var(--border); margin-top: 56px; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+      gap: 24px;
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--blue); }
+    .faq-icon {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: transform 0.3s, color 0.2s;
+      line-height: 1;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); color: var(--blue); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .footer-top {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 72px 48px 48px;
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      gap: 48px;
+    }
+    .footer-brand {}
+    .footer-logo {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700; font-size: 16px;
+      letter-spacing: 0.12em; color: var(--text);
+      margin-bottom: 16px;
+    }
+    .footer-logo-mark {
+      width: 28px; height: 28px;
+      border: 1px solid var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      color: var(--blue);
+    }
+    .footer-tagline { font-size: 13px; color: var(--muted); line-height: 1.65; max-width: 260px; margin-bottom: 24px; }
+    .footer-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 11px 22px;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      transition: all 0.2s;
+    }
+    .footer-cta:hover { background: var(--blue); color: var(--bg); box-shadow: var(--glow-blue); }
+    .footer-col-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text);
+      margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-links a { font-size: 13px; color: var(--muted); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--blue); }
+    .footer-bottom {
+      max-width: 1320px; margin: 0 auto;
+      padding: 24px 48px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--muted); letter-spacing: 0.06em;
+    }
+    .footer-status {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: var(--green); letter-spacing: 0.10em;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-terminal { display: none; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .process-grid { grid-template-columns: repeat(2, 1fr); }
+      .mission-inner { grid-template-columns: 1fr; gap: 48px; }
+      .dash-body { grid-template-columns: 1fr; }
+      .dash-sidebar, .dash-right { display: none; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-main { padding: 0 24px; }
+      .hero-inner { padding: 60px 24px; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .stat-col { padding: 28px 24px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .services-inner, .platform-inner, .process-inner, .mission-inner, .faq-inner { padding: 0 24px; }
+      .mission-inner { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; padding: 48px 24px; }
+      .footer-bottom { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
+      .process-grid { grid-template-columns: 1fr; }
+      .platform-header { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .stats-inner { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-main">
+    <a href="https://embeings.io" target="_blank" rel="noopener noreferrer" class="nav-logo">
+      <div class="nav-logo-mark">E</div>
+      EMBEINGS AI
+    </a>
+    <ul class="nav-links">
+      <li><a href="#platform">Platform</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-right">
+      <span class="nav-status"><span class="live-dot"></span>MARKETS LIVE</span>
+      <a href="https://embeings.io/contact" target="_blank" rel="noopener noreferrer" class="nav-cta">Book a Call</a>
+    </div>
+  </div>
+  <!-- Ticker Strip -->
+  <div class="ticker-strip">
+    <div class="ticker-label"><span class="live-dot"></span>LIVE</div>
+    <div class="ticker-scroll-wrap">
+      <div class="ticker-track" id="tickerTrack"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="grid-bg">
+  <div class="hero-radial"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge fade-up">
+        <span class="live-dot"></span>
+        EMBEINGS AI — Powered Financial Intelligence System Model
+      </div>
+      <h1 class="hero-h1 fade-up" data-delay="1">
+        The <em>Intelligence Layer</em><br>
+        Your Capital Deserves.
+      </h1>
+      <p class="hero-sub fade-up" data-delay="2">
+        Real-time risk analytics, automated compliance surveillance, and AI-driven portfolio intelligence — built for institutions that can't afford to be second.
+      </p>
+      <div class="hero-actions fade-up" data-delay="3">
+        <a href="#platform" class="btn-primary">Explore Platform →</a>
+        <a href="#diagnosis" class="btn-secondary">Free Diagnosis</a>
+      </div>
+    </div>
+    <!-- Terminal Widget -->
+    <div class="hero-terminal fade-up" data-delay="2">
+      <div class="terminal-bar">
+        <div class="terminal-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="terminal-title">EMBEINGS / MARKET_FEED</span>
+        <span class="label" style="font-size:9px;">LIVE</span>
+      </div>
+      <div class="terminal-body" id="market-rows">
+        <!-- Populated by JS -->
+      </div>
+      <div class="terminal-chart-wrap">
+        <div class="chart-header">
+          <span class="chart-title">SPX INDEX · 1H</span>
+          <span class="chart-val" id="chart-val">5,842.34</span>
+        </div>
+        <svg id="hero-chart" viewBox="0 0 388 80" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00C8FF" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#00C8FF" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path id="chart-area" fill="url(#chartGrad)"/>
+          <path id="chart-line" fill="none" stroke="#00C8FF" stroke-width="1.5"
+            stroke-linecap="round" style="filter:drop-shadow(0 0 4px rgba(0,200,255,0.7))"/>
+        </svg>
+      </div>
+      <div class="ai-signal-wrap">
+        <div class="ai-signal-header">AI SIGNAL STRENGTH</div>
+        <div class="ai-bar-wrap">
+          <div class="ai-bar-row">
+            <span class="ai-bar-label">Momentum</span>
+            <div class="ai-bar-track"><div class="ai-bar-fill blue" style="width:0%" data-target="78%"></div></div>
+            <span class="ai-bar-val">78%</span>
+          </div>
+          <div class="ai-bar-row">
+            <span class="ai-bar-label">Risk Score</span>
+            <div class="ai-bar-track"><div class="ai-bar-fill purple" style="width:0%" data-target="42%"></div></div>
+            <span class="ai-bar-val">42%</span>
+          </div>
+          <div class="ai-bar-row">
+            <span class="ai-bar-label">Confidence</span>
+            <div class="ai-bar-track"><div class="ai-bar-fill amber" style="width:0%" data-target="91%"></div></div>
+            <span class="ai-bar-val">91%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<section id="stats">
+  <div class="stats-inner">
+    <div class="stat-col fade-up">
+      <div class="stat-num"><span>100%</span></div>
+      <div class="stat-label">Monitoring Your Assets</div>
+    </div>
+    <div class="stat-col fade-up" data-delay="1">
+      <div class="stat-num"><span class="counter" data-target="99.97" data-suffix="%">0</span></div>
+      <div class="stat-label">Uptime SLA</div>
+    </div>
+    <div class="stat-col fade-up" data-delay="2">
+      <div class="stat-num"><span class="counter" data-target="0.8" data-suffix="ms">0</span></div>
+      <div class="stat-label">Signal Latency</div>
+    </div>
+    <div class="stat-col fade-up" data-delay="3">
+      <div class="stat-num"><span class="counter" data-target="140" data-suffix="+">0</span></div>
+      <div class="stat-label">Institutional Clients</div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM SHOWCASE -->
+<section id="platform" class="grid-bg">
+  <div class="platform-inner" style="padding-top:120px;padding-bottom:120px;">
+    <div class="platform-header">
+      <div class="fade-up">
+        <span class="label">Command Centre</span>
+        <h2 class="platform-h2" style="margin-top:16px;">
+          One <span>unified</span><br>intelligence terminal.
+        </h2>
+      </div>
+      <p class="platform-desc fade-up" data-delay="1">
+        From real-time risk surveillance to AI-generated portfolio signals, every function your institution needs — consolidated into a single, auditable platform with explainable decision logic.
+      </p>
+    </div>
+    <div class="dashboard-mock fade-up" data-delay="1">
+      <div class="dash-topbar">
+        <div class="dash-tab active">Portfolio Overview</div>
+        <div class="dash-tab">Risk Matrix</div>
+        <div class="dash-tab">Compliance</div>
+        <div class="dash-tab">AI Signals</div>
+        <div class="dash-tab" style="margin-left:auto;border-left:1px solid var(--border);">
+          <span class="live-dot"></span>&nbsp;LIVE
+        </div>
+      </div>
+      <div class="dash-body">
+        <!-- Sidebar -->
+        <div class="dash-sidebar">
+          <div class="dash-menu-item active"><span class="dash-icon">▣</span> Overview</div>
+          <div class="dash-menu-item"><span class="dash-icon">◈</span> Positions</div>
+          <div class="dash-menu-item"><span class="dash-icon">⊞</span> Risk Engine</div>
+          <div class="dash-menu-item"><span class="dash-icon">◎</span> Compliance</div>
+          <div class="dash-menu-item"><span class="dash-icon">⌘</span> AI Reports</div>
+          <div class="dash-menu-item"><span class="dash-icon">≡</span> Audit Trail</div>
+          <div class="dash-menu-item"><span class="dash-icon">⚙</span> Settings</div>
+        </div>
+        <!-- Main -->
+        <div class="dash-main">
+          <div class="dash-main-header">
+            <span class="dash-main-title">Portfolio Performance · YTD</span>
+            <span id="dash-live-time" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">--:--:--</span>
+          </div>
+          <div class="dash-chart-area">
+            <svg id="dash-main-chart" viewBox="0 0 680 200" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="dashGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00C8FF" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#00C8FF" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="benchGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#9C6AFF" stop-opacity="0.15"/>
+                  <stop offset="100%" stop-color="#9C6AFF" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Grid lines -->
+              <line x1="0" y1="50" x2="680" y2="50" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="0" y1="100" x2="680" y2="100" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="0" y1="150" x2="680" y2="150" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <path id="bench-area" fill="url(#benchGrad)"/>
+              <path id="bench-line" fill="none" stroke="#9C6AFF" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+              <path id="port-area" fill="url(#dashGrad)"/>
+              <path id="port-line" fill="none" stroke="#00C8FF" stroke-width="2"
+                style="filter:drop-shadow(0 0 6px rgba(0,200,255,0.8))"/>
+            </svg>
+          </div>
+          <div class="dash-metrics">
+            <div class="dash-metric">
+              <div class="dash-metric-val up">+18.4%</div>
+              <div class="dash-metric-lbl">YTD RETURN</div>
+            </div>
+            <div class="dash-metric">
+              <div class="dash-metric-val dn">-2.1%</div>
+              <div class="dash-metric-lbl">MAX DRAWDOWN</div>
+            </div>
+            <div class="dash-metric">
+              <div class="dash-metric-val">1.82</div>
+              <div class="dash-metric-lbl">SHARPE RATIO</div>
+            </div>
+          </div>
+        </div>
+        <!-- Right panel -->
+        <div class="dash-right">
+          <div>
+            <div class="dash-right-title">ORDER BOOK · BTC-USD</div>
+            <div class="order-book" id="order-book"></div>
+          </div>
+          <div class="ai-scan-wrap">
+            <div class="dash-right-title">AI COMPLIANCE SCAN</div>
+            <div id="ai-scan-rows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-inner">
+    <div class="section-header fade-up">
+      <span class="label">Core Modules</span>
+      <h2 class="section-h2">Everything your institution<br>needs to <span>operate at speed.</span></h2>
+    </div>
+    <div class="services-grid">
+      <!-- Card 1 -->
+      <div class="service-card fade-up">
+        <div class="service-num">MODULE 01 — RISK ENGINE</div>
+        <div class="service-mini-chart">
+          <svg width="100%" height="56" viewBox="0 0 280 56" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="s1g" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00C8FF" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#00C8FF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path id="svc1-area" fill="url(#s1g)"/>
+            <path id="svc1-line" fill="none" stroke="#00C8FF" stroke-width="1.5"
+              style="filter:drop-shadow(0 0 4px rgba(0,200,255,0.6))"/>
+          </svg>
+        </div>
+        <h3 class="service-h3">AI Risk Monitoring</h3>
+        <p class="service-p">Continuous real-time surveillance of every position for VaR breaches, concentration limits, and tail-risk exposure — with sub-second alerting.</p>
+        <div class="service-tags">
+          <span class="service-tag">VAR ENGINE</span>
+          <span class="service-tag">STRESS TEST</span>
+          <span class="service-tag">TAIL RISK</span>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="service-card fade-up" data-delay="1">
+        <div class="service-num">MODULE 02 — COMPLIANCE AI</div>
+        <div class="service-mini-chart">
+          <svg width="100%" height="56" viewBox="0 0 280 56">
+            <rect x="10" y="28" width="20" height="24" fill="rgba(0,255,178,0.3)" rx="1"/>
+            <rect x="40" y="16" width="20" height="36" fill="rgba(0,255,178,0.5)" rx="1"/>
+            <rect x="70" y="8" width="20" height="44" fill="rgba(0,255,178,0.7)" rx="1" style="filter:drop-shadow(0 0 6px rgba(0,255,178,0.5))"/>
+            <rect x="100" y="20" width="20" height="32" fill="rgba(0,255,178,0.4)" rx="1"/>
+            <rect x="130" y="4" width="20" height="48" fill="rgba(0,255,178,0.8)" rx="1" style="filter:drop-shadow(0 0 8px rgba(0,255,178,0.6))"/>
+            <rect x="160" y="14" width="20" height="38" fill="rgba(0,255,178,0.45)" rx="1"/>
+            <rect x="190" y="24" width="20" height="28" fill="rgba(0,255,178,0.3)" rx="1"/>
+            <rect x="220" y="10" width="20" height="42" fill="rgba(0,255,178,0.6)" rx="1"/>
+            <rect x="250" y="20" width="20" height="32" fill="rgba(0,255,178,0.35)" rx="1"/>
+          </svg>
+        </div>
+        <h3 class="service-h3">Compliance Automation</h3>
+        <p class="service-p">AML signal detection, regulatory reporting automation, and trade surveillance — covering MiFID II, EMIR, SFTR, and custom jurisdictional rules.</p>
+        <div class="service-tags">
+          <span class="service-tag">AML</span>
+          <span class="service-tag">MIFID II</span>
+          <span class="service-tag">REPORTING</span>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="service-card fade-up" data-delay="2">
+        <div class="service-num">MODULE 03 — ALPHA AI</div>
+        <div class="service-mini-chart">
+          <svg width="100%" height="56" viewBox="0 0 280 56" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="s3g" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#9C6AFF" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#9C6AFF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path id="svc3-area" fill="url(#s3g)"/>
+            <path id="svc3-line" fill="none" stroke="#9C6AFF" stroke-width="1.5"
+              style="filter:drop-shadow(0 0 4px rgba(156,106,255,0.6))"/>
+          </svg>
+        </div>
+        <h3 class="service-h3">Alpha Signal Generation</h3>
+        <p class="service-p">NLP-driven sentiment analysis, cross-asset correlation mapping, and machine-learned factor models that surface actionable signals before the market prices them in.</p>
+        <div class="service-tags">
+          <span class="service-tag">NLP SENTIMENT</span>
+          <span class="service-tag">FACTOR MODEL</span>
+          <span class="service-tag">SIGNALS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="grid-bg">
+  <div class="process-bg-text">EMBEINGS</div>
+  <div class="process-inner">
+    <div class="section-header fade-up">
+      <span class="label">Deployment Protocol</span>
+      <h2 class="section-h2" style="margin-top:16px;">From audit to live<br>in <span style="color:var(--blue);">four structured phases.</span></h2>
+    </div>
+    <div class="process-grid">
+      <div class="process-step fade-up">
+        <div class="step-num-large">01</div>
+        <h3 class="step-h3">Operational Intelligence Audit</h3>
+        <p class="step-p">We map every workflow, data flow, and system touchpoint inside your institution — identifying automation opportunities, compliance gaps, and latency bottlenecks.</p>
+        <div class="step-duration">DURATION: 2–3 WEEKS</div>
+      </div>
+      <div class="process-step fade-up" data-delay="1">
+        <div class="step-num-large">02</div>
+        <h3 class="step-h3">System Architecture Design</h3>
+        <p class="step-p">Custom AI architecture designed around your existing infrastructure, regulatory environment, and institutional risk appetite — not a generic SaaS template.</p>
+        <div class="step-duration">DURATION: 1–2 WEEKS</div>
+      </div>
+      <div class="process-step fade-up" data-delay="2">
+        <div class="step-num-large">03</div>
+        <h3 class="step-h3">Deployment & Integration</h3>
+        <p class="step-p">Staged rollout with parallel running against legacy systems, full data validation, and live monitoring before any hard cutover — zero operational disruption.</p>
+        <div class="step-duration">DURATION: 3–6 WEEKS</div>
+      </div>
+      <div class="process-step fade-up" data-delay="3">
+        <div class="step-num-large">04</div>
+        <h3 class="step-h3">Governance & Optimisation</h3>
+        <p class="step-p">Ongoing model governance, regulatory update management, and continuous performance optimisation — with a senior strategist accountable to your team.</p>
+        <div class="step-duration">ONGOING RETAINER</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section id="mission">
+  <div class="mission-inner">
+    <div>
+      <span class="label fade-up">Our Mandate</span>
+      <h2 class="mission-h2 fade-up" data-delay="1">
+        AI that reduces<br>exposure — not <span>introduces it.</span>
+      </h2>
+      <p class="mission-p fade-up" data-delay="2">
+        Every system we build carries a full audit trail, explainable decision logic, and a senior human strategist accountable for its governance. That is not automation. That is financial intelligence — and it has to be held to a higher standard.
+      </p>
+      <a href="https://embeings.io/contact" target="_blank" rel="noopener noreferrer" class="mission-link fade-up" data-delay="3">
+        Discuss Your Institution →
+      </a>
+    </div>
+    <div class="mission-right fade-up" data-delay="1">
+      <div class="mission-stat">
+        <div class="mission-stat-val blue"><span class="counter" data-target="45">0</span>d</div>
+        <div class="mission-stat-label">AVG. DEPLOYMENT TIME</div>
+      </div>
+      <div class="mission-stat">
+        <div class="mission-stat-val cyan">100%</div>
+        <div class="mission-stat-label">CUSTOM ARCHITECTURE</div>
+      </div>
+      <div class="mission-stat">
+        <div class="mission-stat-val amber"><span class="counter" data-target="12">0</span>x</div>
+        <div class="mission-stat-label">FASTER REPORTING</div>
+      </div>
+      <div class="mission-stat">
+        <div class="mission-stat-val purple">SOC 2</div>
+        <div class="mission-stat-label">TYPE II CERTIFIED</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSIS TOOL -->
+<style>
+#fdt-wrap {
+  max-width: 700px; margin: 0 auto; padding: 0 1.25rem 4rem;
+  position: relative; z-index: 1;
+  font-family: 'Space Grotesk', sans-serif; color: var(--text);
+  --border-act: rgba(0,200,255,0.40);
+}
+#fdt-wrap .ticker-strip {
+  height: 34px; background: var(--surface); border-bottom: 1px solid var(--border);
+  overflow: hidden; display: flex; align-items: center; margin-bottom: 2rem;
+  margin-left: -1.25rem; margin-right: -1.25rem;
+}
+#fdt-wrap .ticker-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em;
+  color: var(--blue); padding: 0 16px; white-space: nowrap; border-right: 1px solid var(--border);
+  height: 100%; display: flex; align-items: center; background: var(--elevated); flex-shrink: 0;
+}
+#fdt-wrap .ticker-scroll { overflow: hidden; flex: 1; display: flex; align-items: center; }
+#fdt-wrap .ticker-track { display: flex; animation: fdt-ticker 30s linear infinite; white-space: nowrap; }
+@keyframes fdt-ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+#fdt-wrap .t-item {
+  display: inline-flex; align-items: center; gap: 8px; padding: 0 20px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; border-right: 1px solid var(--border);
+}
+#fdt-wrap .t-sym { color: var(--text); font-weight: 600; }
+#fdt-wrap .t-val { color: var(--muted); }
+#fdt-wrap .t-up { color: var(--green); }
+#fdt-wrap .t-dn { color: var(--red); }
+#fdt-wrap .brand-bar { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 0 1.75rem; }
+#fdt-wrap .brand-logo { display: flex; align-items: center; gap: 10px; }
+#fdt-wrap .brand-mark {
+  width: 30px; height: 30px; border: 1px solid var(--blue); display: flex;
+  align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 700; color: var(--blue); box-shadow: var(--glow-sm); position: relative;
+}
+#fdt-wrap .brand-mark::before { content: ''; position: absolute; inset: -3px; border: 1px solid rgba(0,200,255,0.15); }
+#fdt-wrap .brand-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--text); }
+#fdt-wrap .brand-name span { color: var(--blue); }
+#fdt-wrap .brand-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--cyan); border: 1px solid rgba(0,255,178,0.25); padding: 3px 12px; background: rgba(0,255,178,0.05); text-transform: uppercase; }
+#fdt-wrap .prog-wrap { height: 2px; background: var(--dim); margin-bottom: 6px; position: relative; overflow: visible; }
+#fdt-wrap .prog-fill {
+  height: 2px; width: 6%; background: linear-gradient(90deg, var(--blue), var(--cyan));
+  transition: width 0.45s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 12px rgba(0,200,255,0.7), 0 0 4px rgba(0,255,178,0.5); position: relative;
+}
+#fdt-wrap .prog-fill::after { content: ''; position: absolute; right: -1px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+#fdt-wrap .prog-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; }
+#fdt-wrap .prog-dots { display: flex; align-items: center; gap: 5px; }
+#fdt-wrap .pdot { width: 5px; height: 5px; background: var(--dim); transition: all 0.3s; }
+#fdt-wrap .pdot.active { background: var(--blue); box-shadow: var(--glow-sm); width: 16px; }
+#fdt-wrap .pdot.done { background: var(--cyan); }
+#fdt-wrap .prog-step { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase; }
+#fdt-wrap .step { display: none; }
+#fdt-wrap .step.active { display: block; animation: fdt-fadeUp 0.3s ease; }
+@keyframes fdt-fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+#fdt-wrap .step-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
+#fdt-wrap .step-tag::before { content: '[ '; }
+#fdt-wrap .step-tag::after  { content: ' ]'; }
+#fdt-wrap .step-h { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.28; margin-bottom: 8px; letter-spacing: -0.02em; }
+#fdt-wrap .step-h .hl { color: var(--blue); }
+#fdt-wrap .step-h .hl2 { color: var(--cyan); }
+#fdt-wrap .step-sub { font-size: 12px; color: var(--muted); margin-bottom: 2rem; line-height: 1.75; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.01em; }
+#fdt-wrap .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+#fdt-wrap .form-group { margin-bottom: 1rem; }
+#fdt-wrap label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: var(--muted); margin-bottom: 7px; letter-spacing: 0.1em; text-transform: uppercase; }
+#fdt-wrap label span { color: var(--cyan); }
+#fdt-wrap input, #fdt-wrap select, #fdt-wrap textarea { width: 100%; border: 1px solid var(--border); padding: 11px 14px; font-size: 13px; font-family: 'Space Grotesk', sans-serif; background: var(--surface); color: var(--text); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+#fdt-wrap input::placeholder, #fdt-wrap textarea::placeholder { color: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+#fdt-wrap select option { background: var(--surface); color: var(--text); }
+#fdt-wrap input:focus, #fdt-wrap select:focus, #fdt-wrap textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,200,255,0.12), var(--glow-sm); }
+#fdt-wrap textarea { resize: vertical; min-height: 120px; }
+#fdt-wrap .err { color: var(--red); font-size: 11px; margin-top: 8px; display: none; font-family: 'JetBrains Mono', monospace; }
+#fdt-wrap .seg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 2rem; }
+#fdt-wrap .seg-card { border: 1px solid var(--border); padding: 18px 16px; cursor: pointer; transition: all 0.18s; background: var(--surface); position: relative; overflow: hidden; }
+#fdt-wrap .seg-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--blue), transparent); opacity: 0; transition: opacity 0.2s; }
+#fdt-wrap .seg-card:hover { border-color: var(--border-act); background: var(--elevated); }
+#fdt-wrap .seg-card:hover::before { opacity: 1; }
+#fdt-wrap .seg-card.selected { border-color: var(--blue); background: var(--elevated); box-shadow: 0 0 18px rgba(0,200,255,0.10); }
+#fdt-wrap .seg-card.selected::before { opacity: 1; }
+#fdt-wrap .seg-card.selected .seg-title { color: var(--blue); }
+#fdt-wrap .seg-icon { font-size: 20px; display: block; margin-bottom: 10px; }
+#fdt-wrap .seg-title { font-size: 13px; font-weight: 600; color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+#fdt-wrap .seg-desc { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.01em; }
+#fdt-wrap .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 2rem; }
+#fdt-wrap .opt-card { border: 1px solid var(--border); padding: 14px 16px; cursor: pointer; transition: all 0.18s; background: var(--surface); position: relative; overflow: hidden; }
+#fdt-wrap .opt-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0; transition: opacity 0.2s; }
+#fdt-wrap .opt-card:hover { border-color: rgba(0,255,178,0.3); background: var(--elevated); }
+#fdt-wrap .opt-card:hover::before { opacity: 1; }
+#fdt-wrap .opt-card.selected { border-color: var(--cyan); background: var(--elevated); box-shadow: 0 0 14px rgba(0,255,178,0.08); }
+#fdt-wrap .opt-card.selected::before { opacity: 1; }
+#fdt-wrap .opt-card.selected .opt-t { color: var(--cyan); }
+#fdt-wrap .opt-icon { font-size: 16px; display: block; margin-bottom: 7px; }
+#fdt-wrap .opt-t { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.35; }
+#fdt-wrap .opt-s { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+#fdt-wrap .check-list { display: grid; gap: 8px; margin-bottom: 2rem; }
+#fdt-wrap .check-item { display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); padding: 12px 15px; cursor: pointer; transition: all 0.18s; background: var(--surface); }
+#fdt-wrap .check-item:hover { border-color: rgba(0,200,255,0.3); background: var(--elevated); transform: translateX(2px); }
+#fdt-wrap .check-item.selected { border-color: var(--blue); background: var(--elevated); }
+#fdt-wrap .check-box { width: 16px; height: 16px; border: 1px solid var(--dim); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; font-size: 10px; font-weight: 800; color: var(--bg); font-family: 'JetBrains Mono', monospace; }
+#fdt-wrap .check-item.selected .check-box { background: var(--blue); border-color: var(--blue); box-shadow: var(--glow-sm); }
+#fdt-wrap .check-label { font-size: 13px; color: var(--text); line-height: 1.4; }
+#fdt-wrap .qnum { display: inline-block; background: rgba(0,200,255,0.08); color: var(--blue); font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; padding: 3px 12px; margin-bottom: 10px; letter-spacing: 0.1em; border: 1px solid rgba(0,200,255,0.25); text-transform: uppercase; }
+#fdt-wrap .fdt-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 1.75rem; }
+#fdt-wrap .btn-back { background: transparent; border: 1px solid var(--dim); color: var(--muted); padding: 10px 22px; font-size: 12px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.18s; letter-spacing: 0.08em; text-transform: uppercase; }
+#fdt-wrap .btn-back:hover { border-color: var(--blue); color: var(--blue); }
+#fdt-wrap .btn-next { background: var(--blue); color: var(--bg); border: none; padding: 12px 28px; font-size: 12px; font-weight: 600; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; letter-spacing: 0.1em; text-transform: uppercase; }
+#fdt-wrap .btn-next:hover { box-shadow: var(--glow-blue); transform: translateY(-1px); }
+#fdt-wrap .btn-next:disabled { opacity: 0.25; cursor: not-allowed; box-shadow: none; transform: none; }
+#fdt-wrap .res-header { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--blue); padding: 1.5rem; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+#fdt-wrap .res-header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--blue), var(--cyan)); box-shadow: 0 0 12px rgba(0,200,255,0.6); }
+#fdt-wrap .res-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+#fdt-wrap .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: fdt-pulseDot 2s ease-in-out infinite; flex-shrink: 0; }
+@keyframes fdt-pulseDot { 0%,100%{opacity:1;box-shadow:0 0 6px var(--green)} 50%{opacity:0.4;box-shadow:0 0 2px var(--green)} }
+#fdt-wrap .res-h { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; color: var(--text); line-height: 1.45; letter-spacing: -0.01em; }
+#fdt-wrap .res-sub { font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.75; font-family: 'JetBrains Mono', monospace; }
+#fdt-wrap .alert-band { display: flex; align-items: flex-start; gap: 12px; background: rgba(255,69,96,0.06); border: 1px solid rgba(255,69,96,0.25); padding: 14px; margin-bottom: 1.5rem; }
+#fdt-wrap .alert-icon { font-size: 16px; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; color: var(--red); }
+#fdt-wrap .alert-txt { font-size: 12px; color: #fca5a5; line-height: 1.65; font-family: 'JetBrains Mono', monospace; }
+#fdt-wrap .priority-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; color: var(--cyan); text-transform: uppercase; margin-bottom: 1rem; }
+#fdt-wrap .priority-tag::before { content: '[ '; }
+#fdt-wrap .priority-tag::after  { content: ' ]'; }
+#fdt-wrap .rec-card { border: 1px solid var(--border); padding: 18px; margin-bottom: 10px; background: var(--surface); transition: all 0.22s; position: relative; overflow: hidden; animation: fdt-cardIn 0.4s ease both; }
+#fdt-wrap .rec-card:nth-child(1){ animation-delay:0.1s }
+#fdt-wrap .rec-card:nth-child(2){ animation-delay:0.22s }
+#fdt-wrap .rec-card:nth-child(3){ animation-delay:0.34s }
+@keyframes fdt-cardIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+#fdt-wrap .rec-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0; transition: opacity 0.2s; }
+#fdt-wrap .rec-card:hover { border-color: rgba(0,255,178,0.25); transform: translateY(-2px); box-shadow: 0 6px 28px rgba(0,200,255,0.07); }
+#fdt-wrap .rec-card:hover::before { opacity: 1; }
+#fdt-wrap .rec-row { display: flex; gap: 14px; }
+#fdt-wrap .rec-num { width: 26px; height: 26px; background: transparent; border: 1px solid var(--blue); color: var(--blue); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; box-shadow: var(--glow-sm); }
+#fdt-wrap .rec-t { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+#fdt-wrap .rec-b { font-size: 12px; color: var(--muted); line-height: 1.7; font-family: 'JetBrains Mono', monospace; }
+#fdt-wrap .rec-imp { display: inline-block; background: rgba(0,255,178,0.08); color: var(--cyan); border: 1px solid rgba(0,255,178,0.22); font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 10px; margin-top: 10px; font-weight: 600; letter-spacing: 0.06em; }
+#fdt-wrap .next-box { border: 1px solid var(--border); border-left: 2px solid var(--cyan); padding: 1.25rem 1.5rem; margin: 1.5rem 0; background: var(--surface); box-shadow: -3px 0 16px rgba(0,255,178,0.07); }
+#fdt-wrap .next-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; }
+#fdt-wrap .next-tag::before { content: '▶  '; font-size: 8px; }
+#fdt-wrap .next-text { font-size: 12px; color: var(--muted); line-height: 1.8; font-family: 'JetBrains Mono', monospace; }
+#fdt-wrap .cta-box { background: var(--surface); border: 1px solid var(--border-act); padding: 2rem; text-align: center; margin-top: 1.5rem; position: relative; overflow: hidden; }
+#fdt-wrap .cta-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--blue), var(--cyan), var(--blue)); box-shadow: 0 0 14px rgba(0,200,255,0.5); }
+#fdt-wrap .cta-box::after { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,200,255,0.03), transparent); animation: fdt-shimmer 4s ease-in-out infinite; }
+@keyframes fdt-shimmer { 0%{left:-100%} 100%{left:200%} }
+#fdt-wrap .cta-box h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.02em; background: linear-gradient(120deg, var(--blue) 0%, var(--cyan) 60%, var(--text) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+#fdt-wrap .cta-box p { font-size: 12px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.8; font-family: 'JetBrains Mono', monospace; }
+#fdt-wrap .cta-btn { display: inline-block; background: var(--blue); color: var(--bg); padding: 14px 32px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; text-decoration: none; letter-spacing: 0.12em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.2s; }
+#fdt-wrap .cta-btn:hover { box-shadow: var(--glow-blue); transform: translateY(-1px); }
+#fdt-wrap .trust-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 1.25rem; }
+#fdt-wrap .trust-tag { background: var(--elevated); border: 1px solid var(--border); padding: 3px 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; transition: all 0.18s; }
+#fdt-wrap .trust-tag:hover { border-color: var(--cyan); color: var(--cyan); }
+#fdt-wrap .profile-chip { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid rgba(0,200,255,0.2); padding: 5px 14px 5px 8px; margin-bottom: 1.5rem; }
+#fdt-wrap .profile-txt { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+#fdt-wrap .profile-txt strong { color: var(--text); }
+#fdt-wrap .saved-note { margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--border); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.7; }
+#fdt-wrap .saved-note strong { color: var(--cyan); }
+@media(max-width:500px){
+  #fdt-wrap .form-grid, #fdt-wrap .seg-grid, #fdt-wrap .opt-grid { grid-template-columns: 1fr; }
+  #fdt-wrap .step-h { font-size: 22px; }
+}
+</style>
+
+<section id="diagnosis" style="padding:80px 0;background:var(--elevated);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;">
+  <div style="max-width:1320px;margin:0 auto;padding:0 48px;">
+    <div class="section-header fade-up" style="margin-bottom:48px;">
+      <span class="label">Free Financial IQ Diagnosis</span>
+      <h2 class="section-h2" style="margin-top:16px;">Find the exact gaps costing your<br>firm <span style="color:var(--cyan);">time and revenue.</span></h2>
+    </div>
+  </div>
+  <div id="fdt-wrap">
+    <div class="ticker-strip">
+      <div class="ticker-label">EMBEINGS FIN-IQ</div>
+      <div class="ticker-scroll"><div class="ticker-track" id="fdt-ticker-track"></div></div>
+    </div>
+    <div class="brand-bar">
+      <div class="brand-logo">
+        <div class="brand-mark">₹</div>
+        <span class="brand-name">EMBEINGS AI <span>FINANCIAL IQ</span></span>
+      </div>
+      <span class="brand-badge">Free Diagnosis</span>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="fdt-prog"></div></div>
+    <div class="prog-meta">
+      <div class="prog-dots">
+        <span class="pdot active" id="fdt-pd0"></span><span class="pdot" id="fdt-pd1"></span>
+        <span class="pdot" id="fdt-pd2"></span><span class="pdot" id="fdt-pd3"></span>
+        <span class="pdot" id="fdt-pd4"></span><span class="pdot" id="fdt-pd5"></span>
+        <span class="pdot" id="fdt-pd6"></span>
+      </div>
+      <div class="prog-step" id="fdt-prog-lbl">INITIALISING</div>
+    </div>
+
+    <!-- STEP 0 -->
+    <div class="step active" id="fdt-step-0">
+      <div class="step-tag">Free Financial Operations Diagnosis</div>
+      <div class="step-h">Find the exact gaps costing your<br><span class="hl">financial firm</span> time and revenue.</div>
+      <div class="step-sub">5 minutes. Free. Personalised to your firm type and client volume — with your top 3 operational priorities.</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Your Name <span>*</span></label><input id="fdt-f-name" placeholder="Arun Sharma"></div>
+        <div class="form-group"><label>Firm / Company Name <span>*</span></label><input id="fdt-f-firm" placeholder="Sharma &amp; Associates"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Your Role <span>*</span></label>
+          <select id="fdt-f-role">
+            <option value="">Select your role</option>
+            <option>Founder / Owner / Partner</option>
+            <option>CFO / Finance Head</option>
+            <option>Operations Manager</option>
+            <option>Relationship Manager</option>
+            <option>Compliance Officer</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>City <span>*</span></label><input id="fdt-f-city" placeholder="Mumbai"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>WhatsApp / Mobile <span>*</span></label><input id="fdt-f-phone" type="tel" placeholder="+91 98765 43210" oninput="fdtFmtPhone(this)"></div>
+        <div class="form-group"><label>Email <span>*</span></label><input id="fdt-f-email" type="email" placeholder="arun@yourfirm.com"></div>
+      </div>
+      <div id="fdt-lead-err" class="err">// ERROR: All fields required. Valid email needed.</div>
+      <div class="fdt-nav">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;">ENCRYPTED · PRIVATE · DIAGNOSIS USE ONLY</div>
+        <button class="btn-next" onclick="fdtSubmitLead()">INITIALISE DIAGNOSIS →</button>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step" id="fdt-step-1">
+      <div class="step-tag">Step 1 of 6</div>
+      <div class="step-h">What type of financial firm do you run?</div>
+      <div class="step-sub">SELECT ONE — this defines every recommendation you receive.</div>
+      <div class="seg-grid">
+        <div class="seg-card" data-seg="ca" onclick="fdtSelSeg(this)"><span class="seg-icon">📊</span><div class="seg-title">CA / Accounting Firm</div><div class="seg-desc">Audit · Tax · Compliance · GST</div></div>
+        <div class="seg-card" data-seg="wealth" onclick="fdtSelSeg(this)"><span class="seg-icon">💼</span><div class="seg-title">Wealth Management / IFA</div><div class="seg-desc">MF · PMS · Insurance · HNI advisory</div></div>
+        <div class="seg-card" data-seg="nbfc" onclick="fdtSelSeg(this)"><span class="seg-icon">🏦</span><div class="seg-title">NBFC / Lending</div><div class="seg-desc">Loans · Collections · Credit ops</div></div>
+        <div class="seg-card" data-seg="insurance" onclick="fdtSelSeg(this)"><span class="seg-icon">🛡️</span><div class="seg-title">Insurance Broker / Agency</div><div class="seg-desc">Life · General · Health insurance</div></div>
+        <div class="seg-card" data-seg="broker" onclick="fdtSelSeg(this)"><span class="seg-icon">📈</span><div class="seg-title">Stock Broker / Trading Firm</div><div class="seg-desc">Equity · F&amp;O · Commodity · Demat ops</div></div>
+        <div class="seg-card" data-seg="cfo" onclick="fdtSelSeg(this)"><span class="seg-icon">🏢</span><div class="seg-title">Corporate Finance / CFO Office</div><div class="seg-desc">FP&amp;A · Treasury · MIS · Investor relations</div></div>
+        <div class="seg-card" data-seg="fintech" onclick="fdtSelSeg(this)"><span class="seg-icon">⚡</span><div class="seg-title">Fintech Startup</div><div class="seg-desc">Payments · Lending · Neo-banking · WealthTech</div></div>
+        <div class="seg-card" data-seg="other" onclick="fdtSelSeg(this)"><span class="seg-icon">➕</span><div class="seg-title">Other Financial Services</div><div class="seg-desc">Fund mgmt · Forex · Consulting</div></div>
+      </div>
+      <div class="fdt-nav">
+        <button class="btn-back" onclick="fdtGoStep(0)">← BACK</button>
+        <button class="btn-next" id="fdt-btn-1" disabled onclick="fdtGoStep(2)">NEXT →</button>
+      </div>
+    </div>
+
+    <!-- STEPS 2–5 -->
+    <div class="step" id="fdt-step-2">
+      <div class="step-tag">Step 2 of 6</div><div class="qnum">Query 1 / 4</div>
+      <div class="step-h" id="fdt-s2-h"></div><div class="opt-grid" id="fdt-s2-opts"></div>
+      <div class="fdt-nav"><button class="btn-back" onclick="fdtGoStep(1)">← BACK</button><button class="btn-next" id="fdt-btn-2" disabled onclick="fdtGoStep(3)">NEXT →</button></div>
+    </div>
+    <div class="step" id="fdt-step-3">
+      <div class="step-tag">Step 3 of 6</div><div class="qnum">Query 2 / 4</div>
+      <div class="step-h" id="fdt-s3-h"></div><div class="opt-grid" id="fdt-s3-opts"></div>
+      <div class="fdt-nav"><button class="btn-back" onclick="fdtGoStep(2)">← BACK</button><button class="btn-next" id="fdt-btn-3" disabled onclick="fdtGoStep(4)">NEXT →</button></div>
+    </div>
+    <div class="step" id="fdt-step-4">
+      <div class="step-tag">Step 4 of 6</div><div class="qnum">Query 3 / 4 — Multi-Select</div>
+      <div class="step-h" id="fdt-s4-h"></div>
+      <div class="step-sub">SELECT ALL THAT APPLY TO YOUR FIRM.</div>
+      <div class="check-list" id="fdt-s4-opts"></div>
+      <div class="fdt-nav"><button class="btn-back" onclick="fdtGoStep(3)">← BACK</button><button class="btn-next" id="fdt-btn-4" disabled onclick="fdtGoStep(5)">NEXT →</button></div>
+    </div>
+    <div class="step" id="fdt-step-5">
+      <div class="step-tag">Step 5 of 6</div><div class="qnum">Query 4 / 4</div>
+      <div class="step-h" id="fdt-s5-h"></div><div class="opt-grid" id="fdt-s5-opts"></div>
+      <div class="fdt-nav"><button class="btn-back" onclick="fdtGoStep(4)">← BACK</button><button class="btn-next" id="fdt-btn-5" disabled onclick="fdtGoStep(6)">NEXT →</button></div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step" id="fdt-step-6">
+      <div class="step-tag">Step 6 of 6 — Final Input</div><div class="qnum">Terminal Query</div>
+      <div class="step-h">If one workflow at your firm ran on <span class="hl2">autopilot</span> from tomorrow — what would it be?</div>
+      <div class="step-sub">BE SPECIFIC. This is the highest-value input for your diagnosis. Your answer directly shapes recommendations.</div>
+      <textarea id="fdt-s6-txt" placeholder="e.g. Every client gets a monthly portfolio review summary automatically, and our RMs stop spending 3 hours each week manually preparing update emails..."></textarea>
+      <div class="fdt-nav" style="margin-top:1rem">
+        <button class="btn-back" onclick="fdtGoStep(5)">← BACK</button>
+        <button class="btn-next" onclick="fdtBuildResults()">RUN DIAGNOSIS →</button>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="step" id="fdt-step-res">
+      <div class="step-tag">Diagnosis Complete</div>
+      <div class="profile-chip">
+        <div class="live-dot"></div>
+        <div class="profile-txt"><strong id="fdt-r-name"></strong> &nbsp;·&nbsp; <span id="fdt-r-type"></span> &nbsp;·&nbsp; <span id="fdt-r-phone-masked" style="color:var(--dim)"></span></div>
+      </div>
+      <div class="res-header">
+        <div class="res-meta"><div class="live-dot"></div><span id="fdt-r-firm"></span></div>
+        <div class="res-h" id="fdt-r-h"></div>
+        <div class="res-sub" id="fdt-r-sub"></div>
+      </div>
+      <div id="fdt-r-alert" class="alert-band" style="display:none">
+        <div class="alert-icon">!! RISK</div>
+        <div class="alert-txt" id="fdt-r-alert-txt"></div>
+      </div>
+      <div class="priority-tag">Top 3 Operational Priorities</div>
+      <div id="fdt-r-recs"></div>
+      <div class="next-box">
+        <div class="next-tag">Recommended First Execution</div>
+        <div class="next-text" id="fdt-r-next"></div>
+      </div>
+      <div class="cta-box">
+        <h3>Want a custom execution plan for <span id="fdt-r-cta-firm"></span>?</h3>
+        <p>Book a free 30-minute financial operations assessment. We map your exact workflow, identify revenue and time leakage points, and show you what a fully optimised system looks like — before any commitment.</p>
+        <a class="cta-btn" href="https://embeings.io/contact" target="_blank" rel="noopener noreferrer">BOOK FREE ASSESSMENT →</a>
+        <div class="trust-row">
+          <span class="trust-tag">NO COMMITMENT</span>
+          <span class="trust-tag">30 MINUTES</span>
+          <span class="trust-tag">FINANCE-SPECIFIC</span>
+          <span class="trust-tag">CONFIDENTIAL</span>
+        </div>
+      </div>
+      <div class="saved-note">
+        <strong>// DIAGNOSIS LOGGED.</strong> Our team will review your operational profile before the call. Your 30 minutes will be spent on firm-specific solutions — not generic explanations. Expect a WhatsApp confirmation shortly.
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ── FDT Ticker ── */
+(function(){
+  const FDT_T=[{sym:'SENSEX',val:'82,441',chg:'+1.2%',up:true},{sym:'NIFTY 50',val:'25,012',chg:'+0.9%',up:true},{sym:'USD/INR',val:'83.42',chg:'-0.1%',up:false},{sym:'GOLD',val:'₹71,240',chg:'+0.4%',up:true},{sym:'NIFTY BANK',val:'51,880',chg:'+1.1%',up:true},{sym:'10Y YIELD',val:'7.08%',chg:'-0.02',up:false},{sym:'WTI OIL',val:'$83.10',chg:'+0.6%',up:true},{sym:'BTC/USD',val:'94,221',chg:'+3.1%',up:true}];
+  const el=document.getElementById('fdt-ticker-track');
+  if(el) el.innerHTML=[...FDT_T,...FDT_T].map(t=>`<div class="t-item"><span class="t-sym">${t.sym}</span><span class="t-val">${t.val}</span><span class="${t.up?'t-up':'t-dn'}">${t.chg}</span></div>`).join('');
+})();
+
+/* ── State ── */
+const fdtD={name:'',firm:'',role:'',city:'',phone:'',email:'',seg:'',s2:'',s3:'',s4:[],s5:'',s6:''};
+
+/* ── Segment data ── */
+const fdtSD={
+  ca:{s2h:'How many active clients does your firm manage?',s2:[{i:'🌱',t:'Fewer than 30',s:'boutique / solo'},{i:'📂',t:'30 – 100 clients',s:'growing firm'},{i:'📁',t:'100 – 300 clients',s:'mid-size practice'},{i:'🏢',t:'300+ clients',s:'large CA firm'}],s3h:'What is your current tech and workflow setup?',s3:[{i:'📋',t:'Manual / Excel-based',s:'fully manual'},{i:'📊',t:'Basic tally + spreadsheets',s:'partial digital'},{i:'💻',t:'Practice mgmt software',s:'moderate automation'},{i:'🔗',t:'Integrated cloud stack',s:'advanced setup'}],s4h:'Which of these are active pain points at your firm?',s4:['Clients missing tax filing deadlines and GST due dates','Manual document collection delays slowing every engagement','No automated reminders for compliance calendars','Billing and fee collection tracked manually across clients','Client communication (updates, queries) consuming too much time','No clear visibility into which clients are profitable','Staff duplicating work across multiple tools','New client onboarding paperwork is slow and unstructured'],s5h:'Where does your firm lose the most revenue or time?',s5:[{t:'Missed deadlines leading to client penalties and complaints'},{t:'Slow document collection delaying file completion'},{t:'Billing irregularities and unpaid invoices'},{t:'Staff time on manual reminders and follow-ups'},{t:'Losing clients to faster, more responsive firms'},{t:'Multiple gaps — across compliance, billing and communication'}]},
+  wealth:{s2h:'How many active investment clients do you manage?',s2:[{i:'🌱',t:'Fewer than 50',s:'boutique / solo IFA'},{i:'📂',t:'50 – 200 clients',s:'growing AUM'},{i:'📁',t:'200 – 500 clients',s:'established advisor'},{i:'🏢',t:'500+ clients',s:'large wealth firm'}],s3h:'How do you currently manage client portfolios and communication?',s3:[{i:'📋',t:'Manual Excel + phone calls',s:'fully manual'},{i:'📊',t:'Basic CRM + spreadsheets',s:'partial digital'},{i:'💻',t:'Portfolio mgmt platform',s:'moderate automation'},{i:'🔗',t:'Integrated wealth tech stack',s:'advanced setup'}],s4h:'Which of these are current challenges at your firm?',s4:['No structured periodic review communication sent to clients','Market event follow-up with clients done manually','SIP renewals and investment top-ups not proactively triggered','Client onboarding KYC and documentation process is slow','No automated rebalancing alerts or action triggers','AUM reporting and MIS prepared manually each month','Lapsed or low-activity clients not re-engaged systematically','Referral tracking and client acquisition pipeline is unstructured'],s5h:'Where does your practice lose the most AUM or time?',s5:[{t:'Clients moving AUM due to poor communication frequency'},{t:'Missed SIP renewal and investment opportunity windows'},{t:'Manual MIS and reporting consuming RM time'},{t:'Lapsed clients not recovered before they move elsewhere'},{t:'Slow onboarding creating friction at the first impression'},{t:'Multiple gaps across client servicing and retention'}]},
+  nbfc:{s2h:'How many active loan accounts do you manage?',s2:[{i:'🌱',t:'Fewer than 500',s:'small NBFC / DSA'},{i:'📂',t:'500 – 2,000 accounts',s:'growing book'},{i:'📁',t:'2,000 – 10,000',s:'mid-size lender'},{i:'🏢',t:'10,000+ accounts',s:'large NBFC'}],s3h:'How is your loan processing and collections managed?',s3:[{i:'📋',t:'Manual field + spreadsheets',s:'fully manual'},{i:'📊',t:'Basic LOS / basic CRM',s:'partial digital'},{i:'💻',t:'LOS + collections software',s:'moderate automation'},{i:'🔗',t:'Fully integrated lending stack',s:'advanced setup'}],s4h:'Which of these are active operational issues?',s4:['EMI reminder communication to borrowers is manual or inconsistent','Early delinquency detection not automated — no DPD triggers','Field collections team coordination done via phone calls','Loan disbursement status updates not sent automatically','Document collection for applications is slow and manual','No structured re-engagement for pre-NPA accounts','Reporting and portfolio health dashboards updated manually','Customer grievance and query handling is not streamlined'],s5h:'Where does your NBFC lose the most revenue?',s5:[{t:'Rising delinquency from weak early-stage collection communication'},{t:'Field team inefficiency from poor coordination tools'},{t:'Slow disbursement causing borrower drop-offs to competitors'},{t:'High cost-to-collect from manual collections workflow'},{t:'No proactive NPA prevention system'},{t:'Multiple operational gaps across origination, servicing and collections'}]},
+  insurance:{s2h:'How many active policies or clients do you manage?',s2:[{i:'🌱',t:'Fewer than 100',s:'solo / small agency'},{i:'📂',t:'100 – 500 policies',s:'growing book'},{i:'📁',t:'500 – 2,000 policies',s:'mid-size broker'},{i:'🏢',t:'2,000+ policies',s:'large insurance firm'}],s3h:'How do you manage renewals, leads and client communication?',s3:[{i:'📋',t:'Manual calls and registers',s:'fully manual'},{i:'📊',t:'Excel + WhatsApp groups',s:'basic digital'},{i:'💻',t:'Insurance CRM (partial)',s:'moderate automation'},{i:'🔗',t:'Integrated policy mgmt + CRM',s:'advanced setup'}],s4h:'Which of these are active issues at your agency?',s4:['Policy renewals lapsing due to poor advance follow-up','New leads not followed up quickly enough — going cold','No automated welcome or onboarding communication post-sale','Claims support and status update communication is manual','Cross-sell and upsell opportunities not tracked systematically','Commission tracking and reconciliation done manually','Client birthday, anniversary and review nudges not automated','No referral generation system from existing satisfied clients'],s5h:'Where does your firm lose the most premium or clients?',s5:[{t:'Lapsed renewals from slow follow-up'},{t:'Leads going cold before first contact'},{t:'Poor post-sale communication reducing client trust'},{t:'Missing cross-sell opportunities in existing book'},{t:'No referral engine despite high client satisfaction'},{t:'Multiple gaps — renewals, leads, and servicing'}]},
+  broker:{s2h:'How many active trading or demat accounts do you manage?',s2:[{i:'🌱',t:'Fewer than 200',s:'sub-broker / small firm'},{i:'📂',t:'200 – 1,000',s:'growing book'},{i:'📁',t:'1,000 – 5,000',s:'mid-size broker'},{i:'🏢',t:'5,000+ accounts',s:'large broker'}],s3h:'How is client communication and account management handled?',s3:[{i:'📋',t:'Manual calls + registers',s:'fully manual'},{i:'📊',t:'Basic CRM + spreadsheets',s:'partial digital'},{i:'💻',t:'Back-office software',s:'moderate automation'},{i:'🔗',t:'Integrated trading + CRM',s:'advanced setup'}],s4h:'Which of these are active challenges at your firm?',s4:['Dormant accounts not re-activated systematically','Brokerage revenue declining from inactive client base','Market update and research communication sent manually','New account onboarding is slow — KYC completion drops off','No structured client education or upsell communication','Margin call alerts and compliance communication is manual','Client query and grievance handling not streamlined','No tracking of client profitability or activity scores'],s5h:'Where does your firm lose the most revenue?',s5:[{t:'Dormant accounts bleeding brokerage revenue'},{t:'Slow account activation reducing new client conversion'},{t:'Manual research/market update workflow consuming RM time'},{t:'No upsell path from equity to F&O or other products'},{t:'Client attrition from poor communication frequency'},{t:'Multiple gaps across activation, retention and communication'}]},
+  cfo:{s2h:'How large is the finance team you manage or support?',s2:[{i:'👤',t:'1 – 5 people',s:'lean finance team'},{i:'👥',t:'6 – 15 people',s:'mid-size function'},{i:'🏢',t:'16 – 30 people',s:'large finance team'},{i:'🌐',t:'30+ people',s:'enterprise finance function'}],s3h:'How is financial reporting and MIS currently managed?',s3:[{i:'📋',t:'Manual Excel + emails',s:'fully manual'},{i:'📊',t:'ERP with manual reporting',s:'partial automation'},{i:'💻',t:'BI tools + ERP integration',s:'moderate automation'},{i:'🔗',t:'Fully integrated FP&A stack',s:'advanced setup'}],s4h:'Which of these are current finance operations gaps?',s4:['MIS and management reports prepared manually each period','Cash flow forecasting not real-time or automated','Budget vs actual variance analysis done manually','Vendor payment processing and approval cycle too slow','Accounts receivable collections tracking done via spreadsheets','Board / investor reporting requires significant manual prep','Audit and compliance documentation compiled at the last minute','No real-time visibility on working capital or treasury position'],s5h:'Where does your finance function lose the most time or accuracy?',s5:[{t:'Monthly close cycle taking too long — data reconciliation errors'},{t:'Delayed MIS causing management to work on stale data'},{t:'Accounts receivable leakage from weak collection follow-up'},{t:'Board reporting consuming disproportionate finance team time'},{t:'No single-source-of-truth for financial performance'},{t:'Multiple gaps — across reporting, collections and planning'}]},
+  fintech:{s2h:'What is your current active user or customer base?',s2:[{i:'🌱',t:'Fewer than 1,000 users',s:'early stage'},{i:'📂',t:'1,000 – 10,000',s:'growing product'},{i:'📁',t:'10,000 – 100,000',s:'scaling startup'},{i:'🏢',t:'100,000+ users',s:'established fintech'}],s3h:'How mature is your current operational infrastructure?',s3:[{i:'🛠️',t:'Manual ops and spreadsheets',s:'pre-automation'},{i:'📊',t:'Basic tools + manual team',s:'partial automation'},{i:'💻',t:'Some automation, fragmented',s:'moderate automation'},{i:'🔗',t:'Mostly automated + integrated',s:'advanced ops'}],s4h:'Which of these are active operational or growth challenges?',s4:['User onboarding completion rate is below target — drop-offs mid-KYC','Collections and EMI reminder workflow is manual or inconsistent','No structured customer lifecycle communication post-signup','Support ticket volume overwhelming team — manual resolution','Risk flags and fraud signals not auto-escalated','Regulatory reporting and audit trails compiled manually','Churn prediction and re-engagement not data-driven','Partner / DSA communication and tracking not automated'],s5h:'Where does your fintech lose the most growth or efficiency?',s5:[{t:'Onboarding drop-offs reducing activation rate'},{t:'Support costs scaling linearly with user growth'},{t:'Collections inefficiency increasing NPA exposure'},{t:'Churn from poor post-acquisition engagement'},{t:'Regulatory risk from manual compliance ops'},{t:'Multiple bottlenecks — across acquisition, ops and retention'}]},
+  other:{s2h:'How many active clients or accounts do you manage?',s2:[{i:'🌱',t:'Fewer than 50',s:'small firm'},{i:'📂',t:'50 – 200',s:'growing practice'},{i:'📁',t:'200 – 500',s:'established firm'},{i:'🏢',t:'500+',s:'large operation'}],s3h:'How is your current operations and client management handled?',s3:[{i:'📋',t:'Mostly manual / paper',s:'fully manual'},{i:'📊',t:'Excel + basic tools',s:'basic digital'},{i:'💻',t:'Software with partial automation',s:'moderate'},{i:'🔗',t:'Integrated digital stack',s:'advanced'}],s4h:'Which of these are active challenges?',s4:['Client follow-up and communication done manually','Billing and invoice tracking not automated','No structured onboarding process for new clients','Compliance deadlines and reminders tracked manually','Staff duplicating work across disconnected tools','No visibility on client profitability or activity','Reporting and MIS prepared manually each period','Client retention and re-engagement not systematic'],s5h:'Where does your firm lose the most revenue or time?',s5:[{t:'Manual client communication consuming too much staff time'},{t:'Missed deadlines or billing errors costing relationships'},{t:'Slow onboarding creating early churn'},{t:'No retention system — clients leave without warning'},{t:'Poor data visibility leading to reactive decisions'},{t:'Multiple gaps — across ops, communication and reporting'}]}
+};
+
+const fdtRECS={
+  ca:[{t:'Compliance Calendar & Deadline Automation',b:'Every client receives automated reminders for GST filings, TDS due dates, ITR deadlines, and ROC compliance — with escalation triggers if documents aren\'t received.',imp:'Eliminate 80%+ of deadline breaches'},{t:'Client Document Collection System',b:'Structured document request workflows sent automatically at the right time for each engagement type. Clients upload directly. Your team sees what\'s pending in real time.',imp:'Cut document turnaround time by 50–60%'},{t:'Fee Billing & Collection Automation',b:'Automated invoicing, payment reminders, and outstanding fee follow-ups — so your accounts receivable doesn\'t pile up at year end.',imp:'Recover outstanding fees 40–50% faster'}],
+  wealth:[{t:'Periodic Portfolio Review Communication',b:'Every client receives a structured monthly or quarterly portfolio update — performance, market commentary, and actionable recommendations — sent automatically.',imp:'Save 3–5 RM hours per client per quarter'},{t:'SIP Renewal & Investment Opportunity Engine',b:'Maturing SIPs, upcoming redemptions, and new investment opportunities trigger automated personalised messages to clients at precisely the right time.',imp:'Improve SIP renewal rate by 30–45%'},{t:'Dormant Client Re-Engagement System',b:'Clients who haven\'t transacted in 6+ months receive a structured re-engagement sequence — personalised to their investment profile.',imp:'Recover 20–35% of lapsed AUM'}],
+  nbfc:[{t:'EMI Reminder & Early Delinquency Prevention',b:'Automated multi-channel EMI reminders at 5, 3, and 1 day before due date — with escalation for DPD accounts.',imp:'Reduce DPD accounts by 30–40%'},{t:'Collections Workflow Automation',b:'Field agent assignment, visit scheduling, and outcome logging automated through a structured digital workflow.',imp:'Improve collection efficiency by 35–50%'},{t:'Loan Status & Disbursement Communication',b:'Every borrower receives automated status updates at each stage — application, sanction, disbursement, and first EMI.',imp:'Reduce disbursement drop-offs by 40%'}],
+  insurance:[{t:'Policy Renewal Follow-Up Automation',b:'Every policy due for renewal receives a structured 60–30–15–7 day reminder sequence. Lapses from clients who simply forgot are eliminated.',imp:'Increase renewal retention by 25–35%'},{t:'Lead Response & Nurture System',b:'Every new insurance lead receives an immediate response with product information and a structured follow-up sequence over 14 days.',imp:'Convert 2–3x more leads with same team'},{t:'Cross-Sell & Referral Trigger System',b:'Post-claim settlement and annual review events trigger automated cross-sell messages. Satisfied clients who never told anyone about you start generating referrals.',imp:'Generate 30–40% more revenue from existing book'}],
+  broker:[{t:'Dormant Account Re-Activation System',b:'Every account inactive for 60+ days receives a personalised re-engagement sequence with a relevant market trigger — a new opportunity, a sector update, a product introduction.',imp:'Reactivate 25–40% of dormant accounts'},{t:'Market Update & Research Automation',b:'Daily or weekly market updates, sector alerts, and personalised research summaries sent automatically to segmented client lists.',imp:'Save 2–3 RM hours per day'},{t:'New Account Onboarding & Activation',b:'New KYC completions trigger a structured 30-day onboarding sequence — first trade nudge, platform walkthrough, product introduction.',imp:'Improve first-90-day activation by 50%'}],
+  cfo:[{t:'Automated MIS & Management Reporting',b:'Financial dashboards pulling live ERP data — P&L, cash flow, AR/AP aging, budget vs actuals — updated automatically and distributed to stakeholders on schedule.',imp:'Cut monthly reporting time by 60–70%'},{t:'Accounts Receivable Collection Workflow',b:'Structured automated follow-up sequences for overdue receivables — with escalation triggers, aging reports, and payment confirmation tracking.',imp:'Reduce DSO by 20–35%'},{t:'Budget & Forecast Automation',b:'Rolling forecast models with automated variance alerts and scenario triggers. Finance stops spending three weeks on annual budgeting.',imp:'Compress planning cycle by 40–50%'}],
+  fintech:[{t:'User Onboarding Completion Engine',b:'Every incomplete KYC or dropped onboarding triggers a structured re-engagement sequence — personalised to where the user stopped.',imp:'Improve onboarding completion by 35–50%'},{t:'Collections & Delinquency Communication',b:'Automated pre-EMI reminders, post-DPD escalation, and restructuring communication — deployed at scale without manual ops.',imp:'Reduce early-stage delinquency by 30–40%'},{t:'Customer Lifecycle Communication System',b:'Post-activation, users receive structured onboarding, feature discovery, and upsell communication triggered by behaviour and milestones.',imp:'Reduce 90-day churn by 25–35%'}],
+  other:[{t:'Client Communication & Follow-Up Automation',b:'Structured automated follow-up workflows for every active client — update nudges, deadline reminders, and re-engagement triggers.',imp:'Save 2–4 hours per day on manual communication'},{t:'Billing & Invoice Collection System',b:'Automated invoice generation, payment reminders, and outstanding follow-ups ensure you collect what you\'re owed.',imp:'Reduce outstanding AR by 50–60%'},{t:'Client Onboarding & Retention Workflow',b:'Structured onboarding communication and periodic review triggers keep clients informed and engaged throughout the relationship.',imp:'Improve client retention by 25–35%'}]
+};
+const fdtNEXTSTEP={ca:'Start with your compliance calendar and deadline automation. For CA firms, missed deadlines are the single highest-risk operational failure — they damage client trust and can result in penalties.',wealth:'Start with your periodic portfolio review communication system. Most wealth advisors lose AUM not because of performance, but because clients feel forgotten.',nbfc:'Start with your EMI reminder and early delinquency prevention system. For every lending business, the first 30 days after a missed EMI determine whether you recover the account or it slides toward NPA.',insurance:'Start with your policy renewal follow-up automation. Renewals are the most predictable, highest-margin revenue in any insurance book — and the most commonly lost to poor follow-up timing.',broker:'Start with your dormant account re-activation system. Dormant accounts are paid-for clients generating zero brokerage. A structured reactivation sequence typically generates measurable brokerage within the first 30 days.',cfo:'Start with your MIS and management reporting automation. Manual reporting is the most universally painful finance function, and also the one with the most immediate time-savings payoff.',fintech:'Start with your user onboarding completion engine. For any fintech, an incomplete activation is a paid-for acquisition that generates zero LTV.',other:'Start with your client communication and follow-up automation. It is the highest-frequency manual task across all financial services firms — and the one most directly correlated with client retention.'};
+const fdtALERT={manual_high:'Your firm is processing a significant client volume on largely manual systems. This creates a high and growing risk of errors, missed deadlines, and client dissatisfaction.',high_delinq:'High account volume with manual collections infrastructure is one of the most common sources of accelerating NPA in NBFCs and lending firms.'};
+const fdtSEG_LABELS={ca:'CA / Accounting Firm',wealth:'Wealth Management / IFA',nbfc:'NBFC / Lending',insurance:'Insurance Broker',broker:'Stock Broker / Trading Firm',cfo:'Corporate Finance / CFO Office',fintech:'Fintech Startup',other:'Financial Services'};
+const fdtPROG_VALS=[6,15,28,42,58,74,90];
+const fdtPROG_LBLS=['INITIALISING','MODULE 1 / 6','MODULE 2 / 6','MODULE 3 / 6','MODULE 4 / 6','MODULE 5 / 6','FINAL INPUT','ANALYSIS COMPLETE'];
+
+function fdtFmtPhone(el){let v=el.value.replace(/[^\d+]/g,'');if(v.startsWith('+')){const cc=v.slice(0,3),rest=v.slice(3).replace(/\D/g,'');el.value=rest.length<=5?cc+' '+rest:cc+' '+rest.slice(0,5)+' '+rest.slice(5,10);}else{v=v.replace(/\D/g,'');el.value=v.length<=5?v:v.slice(0,5)+' '+v.slice(5,10);}}
+function fdtMaskPhone(p){const d=p.replace(/\D/g,'');if(d.length>=10){if(d.length===12)return'+'+d.slice(0,2)+' XXXXX '+d.slice(-4);if(d.length===11)return'+'+d.slice(0,1)+' XXXXX '+d.slice(-4);return'XXXXX '+d.slice(-4);}return p.slice(0,2)+'XXXXX'+p.slice(-2);}
+function fdtUpdateDots(n){for(let i=0;i<=6;i++){const el=document.getElementById('fdt-pd'+i);if(!el)continue;el.classList.remove('active','done');if(i<n)el.classList.add('done');else if(i===n)el.classList.add('active');}const lbl=document.getElementById('fdt-prog-lbl');if(lbl)lbl.textContent=fdtPROG_LBLS[n]||'COMPLETE';}
+function fdtSubmitLead(){const n=document.getElementById('fdt-f-name').value.trim(),f=document.getElementById('fdt-f-firm').value.trim(),r=document.getElementById('fdt-f-role').value,c=document.getElementById('fdt-f-city').value.trim(),p=document.getElementById('fdt-f-phone').value.trim(),e=document.getElementById('fdt-f-email').value.trim();const err=document.getElementById('fdt-lead-err');if(!n||!f||!r||!c||!p||!e||!e.includes('@')){err.style.display='block';return;}err.style.display='none';Object.assign(fdtD,{name:n,firm:f,role:r,city:c,phone:p,email:e});fdtGoStep(1);}
+function fdtSelSeg(el){document.querySelectorAll('#fdt-wrap .seg-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');fdtD.seg=el.dataset.seg;document.getElementById('fdt-btn-1').disabled=false;}
+function fdtBuildQ(n,qKey,gridId,btnId,multi){const d=fdtSD[fdtD.seg];const hEl=document.getElementById('fdt-s'+n+'-h');if(hEl)hEl.textContent=d[qKey+'h'];const g=document.getElementById(gridId);g.innerHTML='';if(multi){fdtD[qKey]=[];d[qKey].forEach(txt=>{const div=document.createElement('div');div.className='check-item';div.innerHTML=`<div class="check-box"></div><span class="check-label">${txt}</span>`;div.onclick=()=>{div.classList.toggle('selected');const box=div.querySelector('.check-box');if(div.classList.contains('selected')){box.textContent='✓';fdtD[qKey].push(txt);}else{box.textContent='';fdtD[qKey]=fdtD[qKey].filter(x=>x!==txt);}document.getElementById(btnId).disabled=fdtD[qKey].length===0;};g.appendChild(div);});}else{d[qKey].forEach(o=>{const div=document.createElement('div');div.className='opt-card';let inner='';if(o.i)inner+=`<span class="opt-icon">${o.i}</span>`;inner+=`<div class="opt-t">${o.t}</div>`;if(o.s)inner+=`<div class="opt-s">${o.s}</div>`;div.innerHTML=inner;div.onclick=()=>{g.querySelectorAll('.opt-card').forEach(c=>c.classList.remove('selected'));div.classList.add('selected');fdtD[qKey]=o.t;document.getElementById(btnId).disabled=false;};g.appendChild(div);});}}
+function fdtBuildResults(){fdtD.s6=document.getElementById('fdt-s6-txt').value.trim();const seg=fdtD.seg;document.getElementById('fdt-r-name').textContent=fdtD.name;document.getElementById('fdt-r-type').textContent=fdtSEG_LABELS[seg];document.getElementById('fdt-r-phone-masked').textContent=fdtMaskPhone(fdtD.phone);document.getElementById('fdt-r-firm').textContent=fdtD.firm+' · '+fdtD.city;document.getElementById('fdt-r-h').textContent=`Based on your inputs, ${fdtD.firm} has at least 3 operational gaps actively costing revenue and time every week.`;const manual=(fdtD.s3&&(fdtD.s3.includes('Manual')||fdtD.s3.includes('manual')||fdtD.s3.includes('Excel')||fdtD.s3.includes('spreadsheet')));const highVol=(fdtD.s2&&(fdtD.s2.includes('300+')||fdtD.s2.includes('10,000')||fdtD.s2.includes('5,000')||fdtD.s2.includes('100,000')||fdtD.s2.includes('2,000')||fdtD.s2.includes('500+')));let sub='';if(fdtD.s5&&!fdtD.s5.includes('Multiple'))sub=`Primary gap identified: "${fdtD.s5.toLowerCase()}" — this is solvable. `;sub+='Based on your firm profile and current infrastructure, your team is likely absorbing 3–6 hours daily on tasks that a structured automation system can handle completely.';document.getElementById('fdt-r-sub').textContent=sub;const alertEl=document.getElementById('fdt-r-alert');const alertTxt=document.getElementById('fdt-r-alert-txt');if(manual&&highVol){alertEl.style.display='flex';alertTxt.textContent=fdtALERT[seg==='nbfc'?'high_delinq':'manual_high'];}else if(manual){alertEl.style.display='flex';alertTxt.textContent=fdtALERT.manual_high;}else{alertEl.style.display='none';}const rd=document.getElementById('fdt-r-recs');rd.innerHTML='';fdtRECS[seg].forEach((o,i)=>{rd.innerHTML+=`<div class="rec-card"><div class="rec-row"><div class="rec-num">${String(i+1).padStart(2,'0')}</div><div><div class="rec-t">${o.t}</div><div class="rec-b">${o.b}</div><span class="rec-imp">↑ ${o.imp}</span></div></div></div>`;});document.getElementById('fdt-r-next').textContent=fdtNEXTSTEP[seg];document.getElementById('fdt-r-cta-firm').textContent=fdtD.firm;fdtShowStep('fdt-step-res');document.getElementById('fdt-prog').style.width='100%';fdtUpdateDots(7);}
+function fdtGoStep(n){if(n===2)fdtBuildQ(2,'s2','fdt-s2-opts','fdt-btn-2',false);if(n===3)fdtBuildQ(3,'s3','fdt-s3-opts','fdt-btn-3',false);if(n===4)fdtBuildQ(4,'s4','fdt-s4-opts','fdt-btn-4',true);if(n===5)fdtBuildQ(5,'s5','fdt-s5-opts','fdt-btn-5',false);fdtShowStep('fdt-step-'+n);document.getElementById('fdt-prog').style.width=(fdtPROG_VALS[n]||90)+'%';fdtUpdateDots(n);}
+function fdtShowStep(id){document.querySelectorAll('#fdt-wrap .step').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('fdt-wrap').scrollIntoView({behavior:'smooth',block:'start'});}
+</script>
+
+<!-- FAQ -->
+<section id="faq" class="grid-bg">
+  <div class="faq-inner">
+    <div class="section-header fade-up">
+      <span class="label">Common Questions</span>
+      <h2 class="section-h2" style="margin-top:16px;">Everything you need<br>to <span>make the decision.</span></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q"><span>How does Embeings AI differ from off-the-shelf fintech software?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">Off-the-shelf platforms are built for the median institution. Embeings AI is architected around your specific operational model, data infrastructure, and regulatory obligations. Every model is trained on your institution's own historical data — not industry averages. This means higher accuracy, lower false positives, and full compliance with your internal audit requirements.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>What does the onboarding process look like?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">We begin with a 2–3 week Operational Intelligence Audit — mapping your workflows, data flows, and existing systems. From there we design the architecture, deploy in staged phases alongside your legacy systems, and only cut over once all validation criteria are met. Typical full deployment runs 6–10 weeks.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Do we need our own data science or engineering team?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">No. Embeings AI provides the full technical team — data engineers, ML specialists, and integration architects — for the deployment phase. Post-go-live, day-to-day operation requires no specialist in-house resource. Your team works through the platform interface; our team handles all model maintenance and governance.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How is real-time data handled — latency, reliability?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">Our signal processing infrastructure runs at sub-millisecond latency for market data and risk calculations, with 99.97% uptime guaranteed by SLA. We operate on co-located infrastructure in primary financial data centres, with hot standby failover and full disaster recovery capability.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How do you ensure regulatory compliance across jurisdictions?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">Our compliance module is configured per jurisdiction at deployment — covering MiFID II, EMIR, SFTR, Dodd-Frank, and custom internal rules. Regulatory rule sets are maintained by our team and updated automatically. All decisions and alerts carry an explainable audit trail suitable for direct regulator submission.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How is client financial data secured?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">All data is encrypted at rest (AES-256) and in transit (TLS 1.3). Client data is fully isolated in dedicated tenancy environments — never co-mingled with other institutional data. We hold SOC 2 Type II certification, conduct annual penetration testing, and support private cloud deployment for institutions that require on-premises data residency.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="https://embeings.io" target="_blank" rel="noopener noreferrer" class="footer-logo">
+        <div class="footer-logo-mark">E</div>
+        EMBEINGS AI
+      </a>
+      <p class="footer-tagline">Financial intelligence infrastructure for institutions that operate at the speed of markets.</p>
+      <a href="https://embeings.io/contact" target="_blank" rel="noopener noreferrer" class="footer-cta">Book a Strategy Call →</a>
+    </div>
+    <div></div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="#">Risk & Compliance AI</a></li>
+        <li><a href="#">Wealth Automation</a></li>
+        <li><a href="#">Smart Banking Ops</a></li>
+        <li><a href="#">Alpha Signal AI</a></li>
+        <li><a href="#">Audit Intelligence</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <ul class="footer-links">
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Regulatory Compliance</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Data Processing Agreement</a></li>
+        <li><a href="#">Security Centre</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy mono">© 2026 EMBEINGS AI. All rights reserved. Built for the future of finance.</span>
+    <div class="footer-status">
+      <span class="live-dot"></span>
+      ALL SYSTEMS OPERATIONAL
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ─── TICKER DATA ─── */
+const tickers = [
+  {sym:'SPX',price:'5,842.34',chg:'+1.24%',up:true},
+  {sym:'NDX',price:'20,441.18',chg:'+0.87%',up:true},
+  {sym:'BTC',price:'94,221.00',chg:'+3.12%',up:true},
+  {sym:'ETH',price:'3,547.88',chg:'+2.08%',up:true},
+  {sym:'GLD',price:'2,341.50',chg:'-0.34%',up:false},
+  {sym:'EUR/USD',price:'1.0842',chg:'-0.12%',up:false},
+  {sym:'AAPL',price:'218.42',chg:'+1.56%',up:true},
+  {sym:'MSFT',price:'432.18',chg:'+0.92%',up:true},
+  {sym:'NVDA',price:'124.87',chg:'+4.33%',up:true},
+  {sym:'JPM',price:'247.60',chg:'+0.68%',up:true},
+  {sym:'GS',price:'583.24',chg:'+1.02%',up:true},
+  {sym:'VIX',price:'14.82',chg:'-5.44%',up:false},
+  {sym:'10Y',price:'4.312%',chg:'+0.04',up:true},
+  {sym:'WTI',price:'78.34',chg:'-0.87%',up:false},
+  {sym:'SOL',price:'184.22',chg:'+5.71%',up:true},
+];
+const track = document.getElementById('tickerTrack');
+const all = [...tickers,...tickers];
+all.forEach(t => {
+  const div = document.createElement('div');
+  div.className = 'ticker-item';
+  div.innerHTML = `<span class="ticker-sym">${t.sym}</span><span class="ticker-val">${t.price}</span><span class="ticker-chg ${t.up?'up':'dn'}">${t.chg}</span>`;
+  track.appendChild(div);
+});
+
+/* ─── HERO CANVAS — Neural Network AI Animation ─── */
+/* ─── HERO LINE CHART ─── */
+function generateChartData(n, min, max, trend) {
+  const d = [];
+  let v = (min + max) / 2;
+  for (let i = 0; i < n; i++) {
+    v += (Math.random() - 0.48) * (max - min) * 0.06 + trend;
+    v = Math.max(min, Math.min(max, v));
+    d.push(v);
+  }
+  return d;
+}
+function buildSVGPath(data, w, h) {
+  const mn = Math.min(...data), mx = Math.max(...data);
+  const pts = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - ((v - mn) / (mx - mn || 1)) * h * 0.85 - h * 0.07;
+    return [x, y];
+  });
+  const line = pts.map((p,i) => (i===0?`M${p[0]},${p[1]}`:`L${p[0]},${p[1]}`)).join(' ');
+  const area = line + ` L${pts[pts.length-1][0]},${h} L0,${h} Z`;
+  return { line, area };
+}
+
+const heroChartData = generateChartData(60, 5700, 5900, 0.8);
+const hPaths = buildSVGPath(heroChartData, 388, 80);
+document.getElementById('chart-line').setAttribute('d', hPaths.line);
+document.getElementById('chart-area').setAttribute('d', hPaths.area);
+
+// Live ticker update
+setInterval(() => {
+  const v = (heroChartData[heroChartData.length-1] + (Math.random()-0.48)*8).toFixed(2);
+  heroChartData.push(parseFloat(v)); heroChartData.shift();
+  const p2 = buildSVGPath(heroChartData, 388, 80);
+  document.getElementById('chart-line').setAttribute('d', p2.line);
+  document.getElementById('chart-area').setAttribute('d', p2.area);
+  document.getElementById('chart-val').textContent = parseFloat(v).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}, 1200);
+
+/* ─── MARKET ROWS ─── */
+const marketData = [
+  {sym:'BTC/USD', price:'94,221', chg:'+3.12%', up:true},
+  {sym:'ETH/USD', price:'3,547', chg:'+2.08%', up:true},
+  {sym:'AAPL', price:'218.42', chg:'+1.56%', up:true},
+  {sym:'SPX', price:'5,842', chg:'+1.24%', up:true},
+  {sym:'GLD', price:'2,341', chg:'-0.34%', up:false},
+];
+const sparkData = marketData.map(() => generateChartData(20, 40, 60, 0.2));
+const rows = document.getElementById('market-rows');
+marketData.forEach((m, idx) => {
+  const sp = buildSVGPath(sparkData[idx], 60, 24);
+  const row = document.createElement('div');
+  row.className = 'terminal-row';
+  row.innerHTML = `
+    <span class="t-sym">${m.sym}</span>
+    <svg class="t-sparkline" viewBox="0 0 60 24" preserveAspectRatio="none">
+      <path d="${sp.line}" fill="none" stroke="${m.up?'#00C8FF':'#FF4560'}" stroke-width="1.2"
+        style="filter:drop-shadow(0 0 3px ${m.up?'rgba(0,200,255,0.5)':'rgba(255,69,96,0.5)'})"/>
+    </svg>
+    <span class="t-price">${m.price}</span>
+    <span class="t-chg ${m.up?'up':'dn'}">${m.chg}</span>
+  `;
+  rows.appendChild(row);
+});
+
+// Animate AI bars
+setTimeout(() => {
+  document.querySelectorAll('.ai-bar-fill').forEach(b => {
+    b.style.width = b.dataset.target;
+  });
+}, 600);
+
+/* ─── DASHBOARD MAIN CHART ─── */
+const portData = generateChartData(60, 80, 120, 0.6);
+const benchData = generateChartData(60, 80, 110, 0.3);
+function updateDashChart() {
+  const pw = buildSVGPath(portData, 680, 200);
+  const bw = buildSVGPath(benchData, 680, 200);
+  document.getElementById('port-line').setAttribute('d', pw.line);
+  document.getElementById('port-area').setAttribute('d', pw.area);
+  document.getElementById('bench-line').setAttribute('d', bw.line);
+  document.getElementById('bench-area').setAttribute('d', bw.area);
+}
+updateDashChart();
+setInterval(() => {
+  portData.push(portData[portData.length-1] + (Math.random()-0.46)*1.5);
+  portData.shift();
+  benchData.push(benchData[benchData.length-1] + (Math.random()-0.48)*0.8);
+  benchData.shift();
+  updateDashChart();
+}, 1000);
+
+// Live clock
+setInterval(() => {
+  document.getElementById('dash-live-time').textContent = new Date().toLocaleTimeString('en-GB');
+}, 1000);
+
+/* ─── ORDER BOOK ─── */
+function buildOrderBook() {
+  const book = document.getElementById('order-book');
+  book.innerHTML = '';
+  const base = 94221;
+  for (let i = 5; i >= 1; i--) {
+    const price = (base + i * 12 + Math.random()*5).toFixed(0);
+    const size = (Math.random() * 2 + 0.1).toFixed(3);
+    const w = 20 + Math.random() * 60;
+    book.innerHTML += `<div class="order-row"><div class="order-bar ask" style="width:${w}%"></div><span class="order-price ask">${Number(price).toLocaleString()}</span><span class="order-size">${size}</span></div>`;
+  }
+  book.innerHTML += `<div style="border:1px solid rgba(0,200,255,0.2);margin:4px 0;padding:4px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);">${base.toLocaleString()}</div>`;
+  for (let i = 1; i <= 5; i++) {
+    const price = (base - i * 12 - Math.random()*5).toFixed(0);
+    const size = (Math.random() * 2 + 0.1).toFixed(3);
+    const w = 20 + Math.random() * 60;
+    book.innerHTML += `<div class="order-row"><div class="order-bar bid" style="width:${w}%"></div><span class="order-price bid">${Number(price).toLocaleString()}</span><span class="order-size">${size}</span></div>`;
+  }
+}
+buildOrderBook();
+setInterval(buildOrderBook, 1500);
+
+/* ─── AI COMPLIANCE SCAN ─── */
+const scanItems = [
+  {cls:'ok', text:'Position limits ✓'},
+  {cls:'ok', text:'AML check passed'},
+  {cls:'warn', text:'Conc. limit 87%'},
+  {cls:'info', text:'Signal: BUY SPX'},
+  {cls:'ok', text:'MiFID II compliant'},
+];
+const scanWrap = document.getElementById('ai-scan-rows');
+scanItems.forEach(s => {
+  scanWrap.innerHTML += `<div class="ai-scan-row"><div class="ai-scan-dot ${s.cls}"></div><span>${s.text}</span></div>`;
+});
+
+/* ─── SERVICE CHARTS ─── */
+const svc1Data = generateChartData(40, 30, 70, 0.3);
+const svc3Data = generateChartData(40, 30, 70, 0.5);
+function setSvcChart(id, aId, data, w, h) {
+  const p = buildSVGPath(data, w, h);
+  document.getElementById(id).setAttribute('d', p.line);
+  document.getElementById(aId).setAttribute('d', p.area);
+}
+setSvcChart('svc1-line','svc1-area', svc1Data, 280, 56);
+setSvcChart('svc3-line','svc3-area', svc3Data, 280, 56);
+
+/* ─── INTERSECTION OBSERVER ─── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+/* ─── COUNTER ANIMATION ─── */
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      const target = parseFloat(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const decimals = target % 1 !== 0 ? (target.toString().split('.')[1]||'').length : 0;
+      const dur = 1800;
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = (target * ease).toFixed(decimals) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      counterObs.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
+
+/* ─── FAQ ACCORDION ─── */
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q').addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>
